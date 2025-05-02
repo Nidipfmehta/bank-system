@@ -1,6 +1,8 @@
 package com.example.bank_notification_system.service;
 
+import com.example.bank_notification_system.dto.request.AccountDetailsRequest;
 import com.example.bank_notification_system.dto.request.CreateAccountRequest;
+import com.example.bank_notification_system.dto.request.TransactionRequest;
 import com.example.bank_notification_system.exception.AccountNotFoundException;
 import com.example.bank_notification_system.exception.InsufficientBalanceException;
 import com.example.bank_notification_system.factory.NotificationServiceFactory;
@@ -16,12 +18,12 @@ public class AccountService {
 //    private INotificationService notificationService;
     private final NotificationServiceFactory notificationServiceFactory;
 
-    public Account getAccount(final int accountId) throws AccountNotFoundException {
-        return accountRepository.getAccount(accountId);
+    public Account getAccount(final AccountDetailsRequest accountDetailsRequest) throws AccountNotFoundException {
+        return accountRepository.getAccount(accountDetailsRequest);
     }
 
-    public int getBalance(final int accountId) throws AccountNotFoundException {
-        return getAccount(accountId).getBalance();
+    public int getBalance(final AccountDetailsRequest accountDetailsRequest) throws AccountNotFoundException {
+        return getAccount(accountDetailsRequest).getBalance();
     }
 
     public Account createAccount(final CreateAccountRequest createAccountRequest) {
@@ -30,14 +32,14 @@ public class AccountService {
         return accountRepository.createAccount(createAccountRequest);
     }
 
-    public void performTransaction(final int accountId1, final int accountId2, final int money) throws InsufficientBalanceException, AccountNotFoundException {
+    public void performTransaction(final TransactionRequest transactionRequest) throws InsufficientBalanceException, AccountNotFoundException {
 //        accountRepository.performTransaction(accountId1, accountId2, money);
-        Account account1 = getAccount(accountId1);
-       Account account2 = getAccount(accountId2);
-       if(account1.getBalance() >= money) {
-            account1.setBalance(account1.getBalance() - money);
-            account2.setBalance(account2.getBalance() + money);
+        Account sender = getAccount(transactionRequest.getSender());
+       Account receiver = getAccount(transactionRequest.getReceiver());
+       if(sender.getBalance() >= transactionRequest.getAmount()) {
+           sender.setBalance(sender.getBalance() - transactionRequest.getAmount());
+           receiver.setBalance(receiver.getBalance() + transactionRequest.getAmount());
         }
-        throw new InsufficientBalanceException(String.format("Insufficient balance of account %d to perform transaction", accountId1));
+        throw new InsufficientBalanceException(String.format("Insufficient balance of account %d to perform transaction", sender.getAccountId()));
     }
 }
