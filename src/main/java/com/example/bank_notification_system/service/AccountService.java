@@ -28,7 +28,7 @@ public class AccountService {
 
     public Account createAccount(final CreateAccountRequest createAccountRequest) {
         INotificationService notificationService = notificationServiceFactory.getNotificationService(createAccountRequest.getChannel());
-        notificationService.sendNotification();
+//        notificationService.sendNotification();
         return accountRepository.createAccount(createAccountRequest);
     }
 

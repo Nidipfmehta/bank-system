@@ -7,6 +7,11 @@ import com.example.bank_notification_system.exception.AccountNotFoundException;
 import com.example.bank_notification_system.exception.InsufficientBalanceException;
 import com.example.bank_notification_system.models.Account;
 import com.example.bank_notification_system.service.AccountService;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,9 +19,11 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/account")
+@RequiredArgsConstructor
 public class AccountController {
+    private static final Logger log = LoggerFactory.getLogger(AccountController.class);
 
-    private AccountService accountService;
+    private final AccountService accountService;
 
     @GetMapping("/getAccount")
     public ResponseEntity<Account> getAccount(@RequestBody AccountDetailsRequest accountDetailsRequest) {
@@ -24,20 +31,24 @@ public class AccountController {
             Account account = accountService.getAccount(accountDetailsRequest);
             return ResponseEntity.ok(account);
         } catch (AccountNotFoundException e) {
+            log.error("account not found ", e);
             return ResponseEntity.status(404).body(null);
         } catch (Exception e) {
+            log.error("error ", e);
             return ResponseEntity.status(500).body(null);
         }
     }
 
-    @GetMapping("/{accountId}/balance")
+    @GetMapping("/balance")
     public ResponseEntity<String> getBalance(@RequestBody AccountDetailsRequest accountDetailsRequest) {
         try {
             return ResponseEntity.ok(String.format("%s your bank balance is %d. Sent via %s", accountService.getAccount(accountDetailsRequest).getUserName(),
                                                     accountService.getBalance(accountDetailsRequest), accountService.getAccount(accountDetailsRequest).getChannel()));
-        } catch (AccountNotFoundException e) {
+        }  catch (AccountNotFoundException e) {
+            log.error("account not found ", e);
             return ResponseEntity.status(404).body(null);
         } catch (Exception e) {
+            log.error("error ", e);
             return ResponseEntity.status(500).body(null);
         }
     }
@@ -53,9 +64,11 @@ public class AccountController {
         try {
             accountService.performTransaction(transactionRequest);
             return ResponseEntity.ok("transaction is performed");
-        } catch (AccountNotFoundException e) {
+        }  catch (AccountNotFoundException e) {
+            log.error("account not found ", e);
             return ResponseEntity.status(404).body(null);
         } catch (Exception e) {
+            log.error("error ", e);
             return ResponseEntity.status(500).body(null);
         }
     }

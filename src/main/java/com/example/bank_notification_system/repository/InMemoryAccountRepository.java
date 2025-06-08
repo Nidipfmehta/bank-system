@@ -6,10 +6,12 @@ import com.example.bank_notification_system.exception.AccountNotFoundException;
 import com.example.bank_notification_system.exception.InsufficientBalanceException;
 import com.example.bank_notification_system.models.Account;
 import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Repository
 @RequiredArgsConstructor
 public class InMemoryAccountRepository implements IAccountRepository {
     private final List<Account> accountList = new ArrayList<>();

@@ -1,10 +1,15 @@
 package com.example.bank_notification_system.models;
+import lombok.Data;
+import lombok.Builder;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
-@Getter
-@Setter
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Account {
     private static int accountCount = 0;
     private int accountId;
@@ -12,6 +17,7 @@ public class Account {
     private int balance;
     private Channel channel;
 
+    // Add this to auto-generate accountId
     public Account(String userName, int balance, Channel channel) {
         this.accountId = accountCount++;
         this.userName = userName;
@@ -19,35 +25,17 @@ public class Account {
         this.channel = channel;
     }
 
-    public static AccountBuilder builder() {
-        return new AccountBuilder();
+    public String getUserName() {
+        return userName;
     }
 
-    public static class AccountBuilder {
-        private String userName;
-        private int balance;
-        private Channel channel;
-
-        AccountBuilder() {
-        }
-
-        public AccountBuilder userName(String userName) {
-            this.userName = userName;
-            return this;
-        }
-
-        public AccountBuilder balance(int balance) {
-            this.balance = balance;
-            return this;
-        }
-
-        public AccountBuilder channel(Channel channel) {
-            this.channel = channel;
-            return this;
-        }
-
-        public Account build() {
-            return new Account(this.userName, this.balance, this.channel);
-        }
+    public Channel getChannel() {
+        return channel;
     }
+
+    public int getBalance() {
+        return balance;
+    }
+
+
 }
